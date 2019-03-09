@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>{{author.name}}</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="{{url_for('static',filename='css/main_person.css')}}" />
+	<link rel="shortcut icon" href="{{url_for('static',filename='images/logo3.png')}}" />
+	<style type="text/css">
+	img{
+		max-width: 80%
+	}
+	video{
+		max-width: 80%
+	}
+	</style>
+</head>
+
+<body>
+
+	<section id="header">
+		<header>
+			<span class="image avatar"><img src="{{url_for('static',filename=author.icon)}}" alt="" /></span>
+			<h1 id="logo">{{author.name}}</h1>
+		</header>
+		<nav id="nav">
+			<ul>
+				<li><a href="#one" class="active">Sign</a></li>
+				<li><a href="#two">About</a></li>
+				<li><a href="#three">Myblog</a></li>
+				<li><a href="#four">Collection</a></li>
+				{% if change %}
+				<li><a href="#five">Change</a></li>
+				{% endif %}
+				<li><a href="{{url_for('index')}}">Home</a></li>
+			</ul>
+		</nav>
+	</section>
+
+	<div id="wrapper">
+		<div id="main">
+			<section id="one">
+				<div class="container">
+					<h3>Sign</h3>
+					<br>
+					<p>{{author.sign}}</p>
+				</div>
+			</section>
+
+			<section id="two">
+				<div class="container">
+					<h3>About</h3>
+					<br>
+					<ul class="feature-icons">
+						<li class="fa-coffee">{{author.uid}}</li>
+						<li class="fa-bolt">{{author.email}}</li>
+					</ul>
+				</div>
+			</section>
+
+			<section id="three">
+				<div class="container">
+					<h3>Myblog</h3>
+					<br>
+					<div class="features post-thumb">
+	
+					</div>
+				</div>
+			</section>
+			<section id="four">
+				<div class="container">
+					<h3>Collection</h3>
+					<div class="features post-collection">
+	
+					</div>
+				</div>
+			</section>
+			{% if change %}
+			<section id="five">
+				<div class="container">
+					<h3>Change</h3>
+					<form method="post" action="#" enctype='multipart/form-data'>
+						<div class="row uniform">
+							<div class="6u 12u(xsmall)"><input type="text" name="name" id="name" placeholder="昵称"/></div>
+							<div class="6u 12u(xsmall)"><input type="email" name="email" id="email" placeholder="Email"/></div>
+						</div>
+						<div class="row uniform">
+							<div class="12u"><textarea name="sign" id="message" placeholder="Sign" rows="6"></textarea></div>
+						</div>
+						<div class="row uniform">
+							<div class="12u"><input type="file" name="icon"></div>
+						</div>
+						<div class="row uniform">
+							<div class="12u">
+								<ul class="actions">
+									<li><input type="submit" class="special" value="Submit" /></li>
+									<li><input type="reset" value="Reset Form" /></li>
+								</ul>
+							</div>
+						</div>
+					</form>
+				</div>
+			</section>
+			{% endif %}
+			<section id="footer">
+				<div class="container">
+					<ul class="copyright">
+						<li>&copy; 一公里内</li>
+					</ul>
+				</div>
+			</section>
+
+		</div>
+
+		<script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+		<script src="{{url_for('static',filename='js/jquery.scrollzer.min.js')}}"></script>
+		<script src="{{url_for('static',filename='js/jquery.scrolly.min.js')}}"></script>
+		<script src="{{url_for('static',filename='js/skel.min.js')}}"></script>
+		<script src="{{url_for('static',filename='js/util.js')}}"></script>
+		<script src="{{url_for('static',filename='js/main_person.js')}}"></script>
+		<script type="text/javascript">
+			$(function(){
+				{% for blog in blogs %} 
+				fileuri = "{{blog.imag}}";        
+				html2 = '<article>' 
+					+	'<a href="{{url_for('static',filename=blog.imag)}}" class="image">';
+				html3 = '</a>'
+					+		'<div class="inner" style="word-wrap:break-word">' 
+					+		'<a href="{{url_for('view',blog_id=blog.id)}}">'
+					+		'<h4>'+"{{blog.title}}"+'</h4>'
+					+		'</a>'
+					+	'</div>'
+					+	'</article>';
+				imag = ['jpg','png','jpeg','gif']
+				video = ['mp4','mov','ogg']
+				html1 = ""
+				if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),imag)!=-1){
+					html1 = '<img src="{{url_for('static',filename=blog.imag)}}"/>';
+					
+				}else if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),video)!=-1){
+					html1 = '<video controls Metadata>'
+						+	'<source src="{{url_for('static',filename=blog.imag)}}" type="video/mp4">'
+						+	'<source src="{{url_for('static',filename=blog.imag)}}" type="video/quicktime">'
+						+	'<source src="{{url_for('static',filename=blog.imag)}}" type="video/ogg">'
+						+	'<embed width="100%;" height="167px;" src="{{url_for('static',filename=blog.imag)}}">'
+						+'</video>';	
+				}
+				$(".post-thumb").append(html2 + html1 + html3);
+				{% endfor %}
+
+				{% for blog in collection %} 
+				fileuri = "{{blog.imag}}";        
+				html2 = '<article>' 
+					+	'<a href="{{url_for('static',filename=blog.imag)}}" class="image">';
+				html3 = '</a>'
+					+		'<div class="inner" style="word-wrap:break-word">' 
+					+		'<a href="{{url_for('view',blog_id=blog.id)}}">'
+					+		'<h4>'+"{{blog.title}}"+'</h4>'
+					+		'</a>'
+					+	'</div>'
+					+	'</article>';
+				imag = ['jpg','png','jpeg','gif']
+				video = ['mp4','mov','ogg']
+				html1 = ""
+				if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),imag)!=-1){
+					html1 = '<img src="{{url_for('static',filename=blog.imag)}}"/>';
+					
+				}else if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),video)!=-1){
+					html1 = '<video controls Metadata>'
+						+	'<source src="{{url_for('static',filename=blog.imag)}}" type="video/mp4">'
+						+	'<source src="{{url_for('static',filename=blog.imag)}}" type="video/quicktime">'
+						+	'<source src="{{url_for('static',filename=blog.imag)}}" type="video/ogg">'
+						+	'<embed width="100%;" height="167px;" src="{{url_for('static',filename=blog.imag)}}">'
+						+'</video>';	
+				}
+				$(".post-collection").append(html2 + html1 + html3);
+				{% endfor %}
+	          });
+		</script>
+</body>
+
+</html>

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+<section id="bricks">
+
+	<div class="row masonry">
+
+		<!-- brick-wrapper -->
+		<div class="bricks-wrapper">
+
+			<div class="grid-sizer"></div>
+
+			<div class="brick entry featured-grid animate-this">
+				<div class="entry-content">
+					<!--滚动栏-->
+					<div id="featured-post-slider" class="flexslider">
+						<ul class="slides">
+
+							<!--滚动页面-->
+							{% for post_bg,post_author,post_distance in posts %}
+							<li>
+								<div class="featured-post-slide">
+
+									<!--设置图片-->
+									<div class="post-background a{{post_bg.id}}"></div>
+
+									<div class="overlay"></div>
+
+									<div class="post-content">
+
+
+										<!--文本区域-->
+										<ul class="entry-meta">
+											<li>{{post_bg.upload_time}}</li>
+											<li>发布者：<a href="{{url_for('author',authoruid=post_author.uid)}}" style="font-family: STHupo;">{{post_author.name}}</a></li>
+											<li>距离您： {{post_distance}}m</li>
+										</ul>
+										<h1 class="slide-title"><a href="{{url_for('view',blog_id=post_bg.id)}}" title="">{{post_bg.title}}</a></h1>
+
+									</div>
+								</div>
+							</li>
+
+							<script type="text/javascript">
+								html1 = ""
+								fileuri = "{{post_bg.imag}}"; 
+								imag = ['jpg','png','jpeg','gif']
+								video = ['mp4','mov','ogg']								 
+								if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),imag)!=-1){
+									html1 = '<img src="{{url_for('static',filename=post_bg.imag)}}" style="height:100%"/>';
+									
+								}else if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),video)!=-1){
+									html1 = '<video Metadata controls style="height:100%">'
+										+	'<source src="{{url_for('static',filename=post_bg.imag)}}" type="video/mp4" >'
+										+	'<source src="{{url_for('static',filename=post_bg.imag)}}" type="video/quicktime">'
+										+	'<source src="{{url_for('static',filename=post_bg.imag)}}" type="video/ogg">'
+										+	'<embed width="100%;" height="167px;" src="{{url_for('static',filename=post_bg.imag)}}">'
+										+	'</video>';	
+								}
+								$(".a{{post_bg.id}}").append(html1)
+							</script>
+							{% endfor%}
+
+
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			{% for blog_data,user_data,distance in blog_zip %}
+
+			{% if blog_data.blog_type == 1 %}
+			<article class="brick entry format-standard animate-this">
+			{% else %}
+			<article class="brick entry format-audio animate-this">
+			{% endif %}
+				<div class="entry-thumb">
+					<a href="{{url_for('view',blog_id=blog_data.id)}}" class="thumb-link b{{blog_data.id}}">
+					</a>
+					{% if blog_data.blog_type == 2 %}
+					<!--音乐-->
+					<div class="audio-wrap">
+						<audio id="player" src="{{url_for('static',filename=blog_data.audio)}}" width="100%" height="42" controls="controls"></audio>
+					</div>
+					{% endif %}
+				</div>
+				<script type="text/javascript">
+					html2 = ""
+					fileuri = "{{blog_data.imag}}"; 
+					imag = ['jpg','png','jpeg','gif']
+					video = ['mp4','mov','ogg']								 
+					if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),imag)!=-1){
+						html2 = '<img src="{{url_for('static',filename=blog_data.imag)}}"/>';
+						
+					}else if($.inArray(fileuri.substring(fileuri.lastIndexOf(".")+1).toLowerCase(),video)!=-1){
+						html2 = '<video Metadata controls>'
+							+	'<source src="{{url_for('static',filename=blog_data.imag)}}" type="video/mp4">'
+							+	'<source src="{{url_for('static',filename=blog_data.imag)}}" type="video/quicktime">'
+							+	'<source src="{{url_for('static',filename=blog_data.imag)}}" type="video/ogg">'
+							+	'<embed width="100%;" height="167px;" src="{{url_for('static',filename=blog_data.imag)}}">'
+							+'</video>';	
+					}
+					$(".b{{blog_data.id}}").append(html2)
+				</script>
+				<div class="entry-text">
+					<div class="entry-header">
+
+						<div class="entry-meta">
+							<span class="cat-links">
+								{{blog_data.upload_time}}  发布者：<a href="{{url_for('author',authoruid=user_data.uid)}}" style="font-family: STHupo;">{{user_data.name}}</a>		
+							</span>
+							<span>距离您：{{distance}}m</span>
+						</div>
+
+						<h1 class="entry-title"><a href="{{url_for('view',blog_id=blog_data.id)}}">{{blog_data.title}}</a></h1>
+						<p>{{blog_data.blog_markdown | safe | truncate(length=75)}}</p>
+
+					</div>
+					<!--
+					<div class="entry-excerpt">
+						阅读 200 &nbsp;&nbsp;评论 3&nbsp;&nbsp;点赞 3
+					</div>
+				-->
+				</div>
+
+			</article> <!-- 文章结束 -->
+			
+			{% endfor %}
+		</div>
+		<!--文章页面结束-->
+
+	</div>
+
+
+	<!--分页备选-->
+	<!--
+   	<div class="row">	
+   		<nav class="pagination">
+		      <span class="page-numbers prev inactive">Prev</span>
+		   	<span class="page-numbers current">1</span>
+		   	<a href="#" class="page-numbers">2</a>
+		      <a href="#" class="page-numbers">3</a>
+		      <a href="#" class="page-numbers">4</a>
+		      <a href="#" class="page-numbers">5</a>
+		      <a href="#" class="page-numbers">6</a>
+		      <a href="#" class="page-numbers">7</a>
+		      <a href="#" class="page-numbers">8</a>
+		      <a href="#" class="page-numbers">9</a>
+		   	<a href="#" class="page-numbers next">Next</a>
+		  </nav>
+	</div>
+	-->
+    <script src="http://api.map.baidu.com/api?v=1.2" type="text/javascript"></script>
+    <script>
+        function getLocation() {
+            var options = {
+                enableHighAccuracy: true,
+                maximumAge: 1000
+            }
+            if (navigator.geolocation) {
+                //浏览器支持geolocation
+                navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+
+            } else {
+                //浏览器不支持geolocation
+            }
+        }
+
+        //成功时
+        function onSuccess(position) {
+            //返回用户位置
+            //经度
+            $('input[name=lon]').val(position.coords.longitude);
+            //纬度
+            $('input[name=lat]').val(position.coords.latitude);
+        }
+
+
+        //失败时
+        function onError(error) {
+            switch (error.code) {
+                case 1:
+                    alert("位置服务被拒绝");
+                    break;
+
+                case 2:
+                    alert("暂时获取不到位置信息");
+                    break;
+
+                case 3:
+                    alert("获取信息超时");
+                    break;
+
+                case 4:
+                    alert("未知错误");
+                    break;
+            }
+
+        }
+
+        window.onload = getLocation;
+    </script>
+
+</section>
+
+{% endblock %}

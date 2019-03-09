@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    
+    <style type="text/css">
+        body{ 
+            text-align:center
+        }
+
+        #container{
+            margin:0 auto;
+            width:100%;
+            height:550px
+        }
+
+
+    </style>
+</head>
+
+
+<div id="container"></div>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.11&key=e4010aeb43c122cb70a78666c6d0d0ba"></script>
+<script type="text/javascript">
+    // 以用户为中心创建地图实例
+    var map = new AMap.Map("container", {
+        zoom: 13,
+        center: [{{user_location.self_lon}}, {{user_location.self_lat}}],
+        resizeEnable: true
+    });
+
+    // 循环添加图片
+    {% for share in shares %}
+    var marker{{share.blog_id}} = new AMap.Marker({
+        map:map,
+        position: [{{share.gps_lon}}, {{share.gps_lat}}]//点所在位置
+    });
+
+    var title = "<span style='font-size:11px;'>{{share.title}}</span>";
+    var content = [];
+    content.push('<a href="{{url_for('view',blog_id=share.blog_id)}}"><img src="{{url_for('static',filename=share.img)}}"  alt="" width="200"/></a>')
+    
+    //创建信息窗体
+    var infoWindow{{share.blog_id}} = new AMap.InfoWindow({
+        isCustom:true, //是否自定义信息窗体
+        offset: new AMap.Pixel(10,10),
+        content: createInfoWindow(title, content), //调用创建信息窗体的方法--信息窗体的内容
+        
+        autoMove:true,
+    });
+
+
+    //如果希望的是点击标记才 出现这个信息窗口，那把 下面的注释去掉即可
+    AMap.event.addListener(marker{{share.blog_id}},'click',function(){ //监听点标记的点击事件
+        infoWindow{{share.blog_id}}.open(map,marker{{share.blog_id}}.getPosition()); //信息窗体打开
+    });
+
+
+    //构建自定义信息窗体
+    function createInfoWindow(title, content) {
+        //info 为 信息窗体
+        var info = document.createElement("div");
+        info.className = "info";
+ 
+        //可以通过下面的方式修改自定义窗体的宽高
+        info.style.width = "155px";
+
+        // 定义顶部标题
+        var top = document.createElement("div");
+        var titleD = document.createElement("div");      
+        top.className = "info-top";
+        titleD.innerHTML = title;
+        
+        top.appendChild(titleD);
+
+        info.appendChild(top);   //信息窗体增加顶部的div
+ 
+        // 定义中部内容
+        var middle = document.createElement("div");
+        middle.className = "info-middle";
+        middle.style.backgroundColor = 'white';
+        middle.innerHTML = content;
+        info.appendChild(middle);  //信息窗体增加中部的div
+ 
+        // 定义底部内容
+        var bottom = document.createElement("div");
+        bottom.className = "info-bottom";
+        bottom.style.position = 'relative';
+        bottom.style.top = '0px';
+        bottom.style.margin = '0 auto';
+        var closeX = document.createElement("img");
+        closeX.src = "http://webapi.amap.com/images/close2.gif";
+        closeX.onclick = closeInfoWindow; //点击左下角的x可以关闭该信息窗体
+        closeX.style.cssText = "float:left"
+        var sharp = document.createElement("img");
+        sharp.src = "http://webapi.amap.com/images/sharp.png";
+        bottom.appendChild(sharp);
+        bottom.appendChild(closeX); 
+        info.appendChild(bottom);  //信息窗体增加底部的div
+        return info;
+    }
+    //关闭信息窗体
+    function closeInfoWindow() {
+        map.clearInfoWindow();
+    }
+
+/*    var startIcon = new AMap.Icon({
+        // 图标尺寸
+        size: new AMap.Size({{share.imgw}}, {{share.imgh}}),
+        // 图标的取图地址
+        image: '{{url_for('static',filename=share.img)}}',
+        // 图标所用图片大小
+        imageSize: new AMap.Size({{share.imgw}}, {{share.imgh}}),
+        // 图标取图偏移量
+        imageOffset: new AMap.Pixel(0, 0)
+    });
+
+    // 传入 marker
+    var startMarker = new AMap.Marker({
+        position: new AMap.LngLat({{share.gps_lon}}, {{share.gps_lat}}),
+        icon: startIcon,
+        offset: new AMap.Pixel(0, 0)
+    });
+
+    map.add(startMarker);*/
+    {% endfor %}
+
+</script>
+
+{% endblock %}

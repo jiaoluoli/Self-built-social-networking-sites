@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block content %}
+<style type="text/css">
+	em {
+		font-family: STHupo;
+	}
+	p {
+		display: flex;
+		justify-content: space-between;
+		margin:0 auto;
+	}
+	.menu { 
+		display: flex;
+		flex-direction:column;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+	}
+	.menu, .menu li {
+		list-style:none; /* 将默认的列表符号去掉 */
+		padding:0; /* 将默认的内边距去掉 */
+		margin:0; /* 将默认的外边距去掉 */
+	}
+	.menu li { 
+		text-align: center
+	}
+
+</style>
+
+<section id="content-wrap" class="blog-single">
+	<div class="row">
+		<div class="col-twelve">
+				
+			<article class="{{view.style}}">
+
+				{% block standard %}
+				{% endblock %}
+				<div style="text-align: center">
+					<ul class="menu">
+						<li><a id="collected_count"><span>{{blog.collected_count}}</span></a></li>
+						<li>浏览：<span>{{blog.view_count}}</span></li>
+						<li><a id="like_count"><span>{{blog.like_count}}</span></a></li>
+						<li><a href="#comments">评论：</a><span>{{blog.comment_count}}</span></li>
+					</ul>		
+				</div>
+					<script type="text/javascript">	
+						$(function(){
+							var coli = "{{coli}}";
+							var collector;
+							var good;
+							if(coli.substring(0,1)=="1"){
+								$("#collected_count").css({"color":"yellow"});
+								$("#collected_count > span").prepend("已收藏：");
+								collector = false
+							}else{
+								$("#collected_count").css({"color":"black"});
+								$("#collected_count > span").prepend("收藏：");
+								collector = true
+							}
+							if(coli.substring(1,2)=="1"){
+								$("#like_count").css({"color":"yellow"});
+								$("#like_count > span").prepend("已点赞：");
+								good = false
+							}else{
+								$("#like_count").css({"color":"black"});
+								$("#like_count > span").prepend("点赞：");
+								good = true
+							}
+
+							
+							$("#collected_count").on("click",function(){
+								$.ajax({
+									type: "POST",
+									url:"/collect",
+									data:{"blog_id":"{{blog.id}}",
+										  "collector" : collector
+										},
+									success:function(data){
+										if(data.status==1){											
+											if(collector){
+												$("#collected_count").css({"color":"#FFD700"});
+												$("#collected_count > span").text("已收藏："+data.count);
+											}else{
+												$("#collected_count").css({"color":"black"});
+												$("#collected_count > span").text("收藏："+data.count);
+											}
+											collector = !collector;
+										}else{
+											alert("error");
+										}
+									}
+								})
+							})
+							
+							$("#like_count").on("click",function(){
+								$.ajax({
+									type: "POST",
+									url:"/like",
+									data:{"blog_id":"{{blog.id}}",
+										  "good" : good
+										},
+									success:function(data){
+										if(data.status==1){
+											
+											
+											if(good){
+												$("#like_count").css({"color":"#FFD700"});
+												$("#like_count > span").text("已点赞："+data.count);
+											}else{
+												$("#like_count").css({"color":"black"});
+												$("#like_count > span").text("点赞："+data.count);
+											}
+											good = !good
+										}else{
+											alert("error");
+										}
+									}
+								})
+							})
+						})
+					</script>
+					<script type="text/javascript">	
+						$(function(){
+							
+						})
+					</script>	
+				<div class="primary-content">
+					<div class="row">
+						<div class="col-full">
+							<div class="card">
+					<h1 class="page-title">{{blog.title}}</h1>
+					<p><span>标签 : <em>{{blog.tag}}</em></span><span>离您 : <em  class="distance">{{distance}}</em>m</span></p>
+					<ul class="entry-meta">
+						<li class="date">{{blog.upload_time}}</li>
+						<li class="cat">分享者：<a href="{{url_for('author',authoruid=author.uid)}}">{{author.name}}</a></li>
+					</ul>
+
+					<!--markdown-->
+					<p>内容：</p>
+					{{blog.blog_markdown|safe}}
+
+						<div class="author-profile">
+							<!--作者头像-->
+							<img src="{{url_for('static',filename=author.icon)}}" alt="">
+
+							<div class="about">
+								<h4><a href="{{url_for('author',authoruid=author.uid)}}">{{author.name}}</a></h4>
+
+								<p>{{author.sign}}</p>
+
+							</div>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+
+				<div class="pagenav group">
+					<div class="prev-nav">
+						<a href="{{url_for('view',blog_id=blog.id-1)}}">
+							<span>上一篇</span>
+						</a>
+					</div>
+					<div class="next-nav">
+						<a href="{{url_for('view',blog_id=blog.id+1)}}">
+							<span>下一篇</span>
+						</a>
+					</div>
+				</div>
+
+			</article>
+
+
+		</div>
+	</div>
+
+	<!--评论区域-->
+	<div class="comments-wrap">
+		<div id="comments" class="row">
+			<div class="col-full">
+
+				<h3>{{comment_number}}条留言</h3>
+				{% if comment_number != 0 %}
+				<!-- list -->
+				<ol class="commentlist">
+
+					{% for comment,author in comment_zip %}
+					<li class="depth-1">
+						<!--头像设置-->
+						<div class="avatar">
+							<img width="50" height="50" class="avatar" src="{{url_for('static',filename=author.icon)}}" alt="">
+						</div>
+
+						<div class="comment-content">
+
+							<div class="comment-info">
+								<a href="{{url_for('author',authoruid=author.uid)}}"><cite>{{author.name}}</cite></a>
+
+								<div class="comment-meta">
+									<time class="comment-time">{{comment.upload_time}}</time>
+								</div>
+							</div>
+
+							<div class="comment-text">
+								<p>{{comment.comment}}</p>
+							</div>
+
+						</div>
+					</li>
+					{% endfor %}
+
+				</ol>
+				{% endif %}
+
+				<!-- respond -->
+				<div class="respond">
+
+					<h3>留言栏</h3>
+
+					<form name="contactForm" id="contactForm" method="post" action="{{url_for('view',blog_id=blog.id)}}">
+						<fieldset>
+
+							<div class="message form-field">
+								<textarea name="comment" id="cMessage" class="full-width" placeholder="Your Message"></textarea>
+							</div>
+
+							<button type="submit" class="submit button-primary">提交</button>
+
+						</fieldset>
+					</form>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+	
+
+	<script type="text/javascript">	
+
+	</script>
+
+</section>
+{% endblock %}
+
+<!--
+
+	markdown 前台
+
+
+		<script type="text/javascript">
+		function compile() {
+			var converter = new showdown.Converter();
+			var html = converter.makeHtml({{blog.text}});
+			document.getElementById("showtext").innerHTML = html;
+		}
+	</script>
+
+
+
+-->

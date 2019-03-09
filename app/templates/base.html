@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="cn">
+
+
+<head>
+
+	<meta charset="utf-8">
+	<title>One Km One World</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="shortcut icon" href="{{url_for('static',filename='images/logo3.png')}}" />
+
+	<!--手机适配-->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+	<!--css-->
+
+	<link rel="stylesheet" href="{{url_for('static',filename='css/base.css')}}">
+	<link rel="stylesheet" href="{{url_for('static',filename='css/vendor.css')}}">
+	<link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}">
+	<link rel="stylesheet" href="{{url_for('static',filename='css/all.css')}}">
+ 
+	<!--js-->
+	<script src="{{url_for('static',filename='js/modernizr.js')}}"></script>
+	<script src="{{url_for('static',filename='js/pace.min.js')}}"></script>
+
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	{% for message in messages %}
+	<script type="text/javascript">
+		alert('{{message}}')
+	</script>
+	{% endfor %}
+	{% endif %}
+	{% endwith %}
+	<style type="text/css">
+	</style>
+
+
+</head>
+
+
+<body id="top">
+
+	<header class="short-header">
+		<div class="gradient-block"></div>
+
+		<div class="row header-content">
+
+
+			<nav id="main-nav-wrap">
+				<ul class="main-navigation sf-menu">
+					<li class="has-children">
+						探索周边
+						<ul class="sub-menu">
+							<li><a href="" id = "index">图文模式</a></li>
+							<li><a href="" id = "indexmap">地图模式</a></li>
+						</ul>
+					</li>
+					<li><a href="{{url_for('bungakushojoinfo')}}">产品介绍</a></li>
+					<li>
+						<a href="{{url_for('blog_markdown')}}">分享信息</a>
+					</li>
+					<li><a href="{{url_for('author',authoruid=session['uid'])}}">个人主页</a></li>
+				</ul>
+			</nav>
+
+
+
+
+			<!--搜索框展开-->
+			<div class="search-wrap">
+
+				<form role="search" method="get" class="search-form" action="/index/search">
+					<label>
+						<span class="hide-content">Search for:</span>
+						<input type="search" class="search-field" placeholder="Type Your Keywords" value="" name="search_info" title="Search for:"
+						 autocomplete="off">
+					</label>
+					<input type="submit" class="search-submit" value="Search">
+				</form>
+
+				<a href="#" id="close-search" class="close-btn">Close</a>
+
+			</div>
+
+			<!--图标-->
+			<div class="triggers">
+				<a class="search-trigger" href="#"><i class="fa fa-search"></i></a>
+
+				<a class="menu-toggle" href="#"><span>Menu</span></a>
+
+			</div>
+
+		</div>
+
+	</header>
+
+	{% block content %}{% endblock %}
+
+	<!-- footer -->
+	<footer>
+
+		<div class="footer-main">
+
+			<div class="row">
+
+				<div class="col-four tab-full mob-full footer-info">
+					<h4>联系我们</h4>
+					<ul>
+						<li><a href="mailto:2016202307@ruc.edu.cn">Email</a>中国人民大学“一公里”团队</li>
+					</ul>
+				</div>
+
+				<div class="col-four tab-1-3 mob-1-2 social-links">
+					<h4>外部链接</h4>
+					<ul>
+						<li><a href="https://www.amap.com/">高德地图</a></li>
+						<li><a href="https://www.dianping.com/">大众点评</a></li>
+					</ul>
+				</div>
+
+			</div>
+		</div>
+
+
+		<!--copyright-->
+		<div class="footer-bottom">
+			<div class="row">
+
+				<div class="col-twelve">
+					<!--返回顶层-->
+					<div id="go-top">
+						<a class="smoothscroll" title="Back to Top" href="#top"><i class="icon icon-arrow-up"></i></a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+	</footer>
+
+	<div id="preloader">
+		<div id="loader"></div>
+	</div>
+
+	<!--js-->
+	<script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+	<script src="{{url_for('static',filename='js/plugins.js')}}"></script>
+	<script src="{{url_for('static',filename='js/main.js')}}"></script>
+	<script src="http://api.map.baidu.com/api?v=1.2" type="text/javascript"></script>
+    <script>
+        function getLocation() {
+            var options = {
+                enableHighAccuracy: true,
+                maximumAge: 1000
+            }
+            if (navigator.geolocation) {
+                //浏览器支持geolocation
+                navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+
+            } else {
+                //浏览器不支持geolocation
+            }
+        }
+
+        //成功时
+        function onSuccess(position) {
+            //返回用户位置
+            //经度
+	        var longitude = position.coords.longitude;
+	        //纬度
+	        var latitude = position.coords.latitude;
+
+            $('#index').attr("href","{{url_for('index',lon="+longitude+",lat="+latitude+")}}");
+            $('#indexmap').attr("href","{{url_for('showmap',lon="+longitude+",lat="+latitude+")}}");
+
+        }
+
+
+        //失败时
+        function onError(error) {
+        	$('#index').attr("href","{{url_for('index',lon=116.311252,lat=39.967206)}}");
+            $('#indexmap').attr("href","{{url_for('showmap',lon=116.311252,lat=39.967206)}}");
+            switch (error.code) {
+                case 1:
+                    alert("位置服务被拒绝");
+                    //设置默认位置
+                    $('#index').attr("href","{{url_for('index',lon=116.3163373683,lat=39.9782801327)}}");
+                    break;
+
+                case 2:
+                    alert("暂时获取不到位置信息");
+                    //设置默认位置
+                    $('#index').attr("href","{{url_for('index',lon=116.3163373683,lat=39.9782801327)}}");
+                    break;
+
+                case 3:
+                    alert("获取信息超时");
+                     //设置默认位置
+                    $('#index').attr("href","{{url_for('index',lon=116.3163373683,lat=39.9782801327)}}");                   
+                    break;
+
+                case 4:
+                    alert("未知错误");
+                     //设置默认位置
+                    $('#index').attr("href","{{url_for('index',lon=116.3163373683,lat=39.9782801327)}}");                   
+                    break;
+            }
+
+        }
+
+        window.onload = getLocation;
+    </script>
+
+</body>
+
+</html>

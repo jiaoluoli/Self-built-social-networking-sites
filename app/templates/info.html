@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div id="content-wrap" class="styles">
+
+    <div class="row narrow add-bottom text-center">
+
+        <div class="col-twelve tab-full">
+
+            <h1>一公里内</h1>
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <div class="row add-bottom">
+
+        <div class="col-twelve">
+            <hr>
+            <h3>一公里内介绍</h3>
+            <p>“一公里内”，英文名为“One  KM , One World ”。含义为对“一公里”范围内的事物进行重新定义。用户在“一公里”的圈子当中，发现自己身边有趣、新鲜的事物，通过本产品进行分享交流的方式，满足用户的分享需求。
+            </p>
+
+            <div class="table-responsive">
+
+            </div>
+
+        </div>
+    </div> <!-- end row -->
+
+    <div class="row">
+        <hr>
+        <h3>主要成员介绍</h3>
+        <br>
+        <div class="col-six tab-full">
+            <h3>李俊杰</h3>
+            <p><img width="120" height="120" class="pull-left" alt="sample-image" src="{{url_for('static',filename='images/li.jpg')}}">
+                emmmmm,项目负责人的工作，就是把项目交给其他人负责。“一公里内”，融汇了团队各成员的思想和喜好，我们希望通过这个平台，发现更广阔的一公里内。
+            </p>
+        </div>
+
+        <div class="col-six tab-full">
+            <h3>邓和明</h3>
+            <p>
+                <img width="120" height="120" class="pull-left" alt="sample-image" src="{{url_for('static',filename='images/deng.jpg')}}">
+               如果说“就差一个程序猿”是产品功能细节的实现，那么“就差一个技术经理”则是对产品技术框架的宏观把控——如何处理社交应用里的高并发问题？数据库引擎应当如何设计？下至服务端，上至用户端，如何设计一个堪称完美的框架？——此时，你需要一个技术经理。
+            </p>
+        </div>
+
+        <div class="col-six tab-full">
+            <h3>胡舣缘</h3>
+            <p>
+                <img width="120" height="120" class="pull-left" alt="sample-image" src="{{url_for('static',filename='images/hu.jpg')}}">
+                2016级信息资源管理专业。在团队中担任项目经理一职，负责项目进度规划，协助项目开发。喜欢吃吃喝喝逛逛，希望分享渴望发现，期待一公里·v·
+            </p>
+        </div>
+        <div class="col-six tab-full">
+            <h3>王梦璕</h3>
+            <p>
+                <img width="120" height="120" class="pull-left" alt="sample-image" src="{{url_for('static',filename='images/wang.jpg')}}">
+               2016级信息资源管理专业，担任项目团队中营销经理一职，负责市场调研，可行性分析报告，辅助前端设计与数据库设计
+            </p>
+        </div>
+        <div class="col-six tab-full">
+            <h3>莫旭鹏</h3>
+            <p>
+                <img width="120" height="120" class="pull-left" alt="sample-image" src="{{url_for('static',filename='images/mo.jpg')}}">
+                天真烂漫莫旭鹏，心思单纯不做作。文案策划就是我，一般一般要低调。一公里内真是好，自由分享无烦恼。若你还是不了解，快快进来看一看。
+            </p>
+        </div>
+        <div class="col-six tab-full">
+            <h3>张昶</h3>
+            <p>
+                <img width="120" height="120" class="pull-left" alt="sample-image" src="{{url_for('static',filename='images/zhang.jpg')}}">
+                张昶，男，20岁，此次分工为产品经理，主要负责研究客户需求，产品功能设计，系统分析及相关文案工作。
+            </p>
+        </div>
+    </div>
+
+{% endblock %}
